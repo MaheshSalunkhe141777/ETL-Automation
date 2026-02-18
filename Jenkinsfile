@@ -17,9 +17,9 @@ pipeline {
 
         stage('Data Validation (Tests)') {
             steps {
-                echo 'Targeting tests in ETL_Project folder...'
-                // Explicitly pointing to the folder where your test_*.py files live
-                bat 'python -m pytest ETL_Project/ -v --html=report.html --self-contained-html'
+                echo 'Searching for tests in the root directory...'
+                // The "." tells pytest to look in the current folder (workspace root)
+                bat 'python -m pytest . -v --html=report.html --self-contained-html'
             }
         }
 
