@@ -106,7 +106,7 @@ def test_completeness_testing():
     ''')
 
     # Extract the first element (index 0) from each row object
-    source_keys = {row[0] for row in source_result}:wq
+    source_keys = {row[0] for row in source_result}
 
 
 
