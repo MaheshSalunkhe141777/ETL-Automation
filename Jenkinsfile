@@ -2,18 +2,24 @@ pipeline {
     agent any
     
     stages {
-        stage('Install Requirements') {
+        stage('Install Dependencies') {
             steps {
-                // Ensure pip is available and install dependencies
-                bat 'python -m pip install --upgrade pip'
-                bat 'pip install pytest pandas openpyxl' 
+                // This ensures pandas, openpyxl, and pytest are available
+                bat 'pip install pandas openpyxl pytest'
             }
         }
         
         stage('Running Tests') {
             steps {
-                // Use 'python -m pytest' to avoid PATH issues
+                // Using 'python -m pytest' is safer on Windows to avoid PATH issues
                 bat 'python -m pytest -v'
+            }
+        }
+        
+        stage('Run ETL') {
+            steps {
+                echo 'Running main ETL script...'
+                bat 'python main.py'
             }
         }
     }
