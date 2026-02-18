@@ -4,30 +4,28 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Simplified checkout to avoid the 'whatchanged' Git error
                 checkout scm
             }
         }
 
         stage('Initialize & Setup') {
             steps {
-                echo 'Installing requirements and HTML reporting plugin...'
-                // Added pytest-html to fix the unrecognized argument error
+                echo 'Ensuring all plugins are ready...'
                 bat 'python -m pip install pandas openpyxl pytest pytest-html'
             }
         }
 
         stage('Data Validation (Tests)') {
             steps {
-                echo 'Running Automation Tests...'
-                // Removed 'ETL_Project/' to search the whole repo for test_*.py files
-                bat 'python -m pytest -v --html=report.html --self-contained-html'
+                echo 'Targeting tests in ETL_Project folder...'
+                // Explicitly pointing to the folder where your test_*.py files live
+                bat 'python -m pytest ETL_Project/ -v --html=report.html --self-contained-html'
             }
         }
 
         stage('Run ETL Job') {
             steps {
-                echo 'Executing ETL main script...'
+                echo 'Tests passed! Executing main ETL script...'
                 bat 'python main.py'
             }
         }
@@ -35,7 +33,7 @@ pipeline {
 
     post {
         always {
-            echo 'Capturing Test Report...'
+            echo 'Archiving HTML Report...'
             archiveArtifacts artifacts: 'report.html', allowEmptyArchive: true
         }
     }
