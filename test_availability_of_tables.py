@@ -106,7 +106,13 @@ def test_completeness_testing():
     ''')
 
     # Extract the first element (index 0) from each row object
-    source_keys = {row[0] for row in source_result}
+    source_keys = {row[0] for row in source_result}:wq
+
+
+
+
+
+
     target_keys = {row[0] for row in target_result}
 
     # Now the set comparison will work perfectly!
