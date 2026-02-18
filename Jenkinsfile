@@ -4,29 +4,24 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Disabling changelog to bypass the Git 'whatchanged' error
-                checkout([$class: 'GitSCM', 
-                    branches: [[name: '*/main']], 
-                    extensions: [[$class: 'DisableRemotePoll']], 
-                    userRemoteConfigs: [[url: 'https://github.com/MaheshSalunkhe141777/ETL-Automation.git']],
-                    changelog: false 
-                ])
+                // Simplified checkout to avoid the 'whatchanged' Git error
+                checkout scm
             }
         }
 
         stage('Initialize & Setup') {
             steps {
-                echo 'Installing requirements...'
-                // Using -m pip is safer on Windows to ensure it hits the right Python version
-                bat 'python -m pip install pandas openpyxl pytest'
+                echo 'Installing requirements and HTML reporting plugin...'
+                // Added pytest-html to fix the unrecognized argument error
+                bat 'python -m pip install pandas openpyxl pytest pytest-html'
             }
         }
 
         stage('Data Validation (Tests)') {
             steps {
                 echo 'Running Automation Tests...'
-                // Telling pytest to look specifically in the ETL_Project folder
-                bat 'python -m pytest ETL_Project/ -v --html=report.html'
+                // Removed 'ETL_Project/' to search the whole repo for test_*.py files
+                bat 'python -m pytest -v --html=report.html --self-contained-html'
             }
         }
 
@@ -41,8 +36,7 @@ pipeline {
     post {
         always {
             echo 'Capturing Test Report...'
-            // This makes your report.html available to download from the Jenkins UI
-            archiveArtifacts artifacts: '*.html', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'report.html', allowEmptyArchive: true
         }
     }
 }
